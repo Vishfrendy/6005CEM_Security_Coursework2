@@ -10,8 +10,8 @@ Welcome to the GitHub repository for a simple tech E-Commerce website. This proj
 5. Once at the htdocs file, either copy-paste or move the extracted file here.
    
 # Usage
-1. Next, open the XAMPP Control Panel, and start both Apache and MySQL modules.
-2. Open, any web browser and type the URL "http://localhost/Security/Index.php" to open the home page of the website.
+1. Open the XAMPP Control Panel, and start both Apache and MySQL modules.
+2. Open any web browser and type the URL "http://localhost/Security/Index.php" to view the website's homepage.
 3. You can replace "Index.php" in the URL with any other file name to open individually. However, it is not necessary as most of the links in each of the website pages automatically redirect to the other web pages.
 4. To view the codes, just right-click the desired PHP file, click on "Open with..." and select "Notepad++". If do not have Notepad++, can open with any other application that supports HTML, or PHP files such as Visual Studio or NetBeans.
 
