@@ -48,7 +48,7 @@
       box-sizing: border-box;
     }
     button {
-      background-color: #ca8dfd;
+      background-color: #0096c7;
       color: white;
       padding: 10px 20px;
       border: none;
@@ -124,7 +124,7 @@
   </div>
 
   <form action="Signup.php" method="post">
-    <img src="Logo4.png" alt="Your Image" style="width: 75%;">
+    <img src="Logo.png" alt="Your Image" style="width: 75%;">
     <h2>Signup</h2>
     <div class="container">
       <label for="username"><b>Username</b></label>
