@@ -76,72 +76,99 @@
     }
   </style>
 </head>
+
 <body>
-  <?php
-  // Initialize an empty message variable
-  $message = "";
+	<?php
+	// Initialize an empty message variable
+	$message = "";
 
-  // Check if the form is submitted
-  if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Get form data
-    $username = $_POST["username"];
-    $email = $_POST["email"];
-    $password = password_hash($_POST["psw"], PASSWORD_BCRYPT); // Hash the password
+	// Check if the form is submitted
+	if ($_SERVER["REQUEST_METHOD"] == "POST") {
+		// Get form data
+		$username = $_POST["username"];
+		$email = $_POST["email"];
+		$rawSkey = $_POST["skey"]; // Use the original input
+		$skey = password_hash($rawSkey, PASSWORD_BCRYPT); // Hash the security key
+		$password = password_hash($_POST["psw"], PASSWORD_BCRYPT);
 
-    // Database connection parameters
-    $servername = "localhost";
-    $username = "root";
-    $password_db = "";
-    $dbname = "security";
+		// Database connection parameters
+		$servername = "localhost";
+		$db_username = "root";
+		$password_db = "";
+		$dbname = "security";
 
-    // Create connection
-    $conn = new mysqli($servername, $username, $password_db, $dbname);
+		// Create connection
+		$conn = new mysqli($servername, $db_username, $password_db, $dbname);
 
-    // Check connection
-    if ($conn->connect_error) {
-      die("Connection failed: " . $conn->connect_error);
-    }
+		// Check connection
+		if ($conn->connect_error) {
+			die("Connection failed: " . $conn->connect_error);
+		}
 
-    // Insert data into the database
-    $sql = "INSERT INTO users (username, email, password) VALUES ('$username', '$email', '$password')";
+		// Check if the username already exists
+		$checkUsernameQuery = "SELECT username FROM users WHERE username = '$username'";
+		$resultUsername = $conn->query($checkUsernameQuery);
 
-    if ($conn->query($sql) === TRUE) {
-      $message = "New user created successfully";
-    } else {
-      $message = "Error: " . $sql . "<br>" . $conn->error;
-    }
+		// Check if the email already exists
+		$checkEmailQuery = "SELECT email FROM users WHERE email = '$email'";
+		$resultEmail = $conn->query($checkEmailQuery);
 
-    // Close connection
-    $conn->close();
-  }
-  ?>
+		// Validate the security key
+		if (!password_verify($rawSkey, $skey)) {
+			$message = "Invalid security key format.";
+		} else {
+			// Continue with the rest of your logic
+			if ($resultUsername->num_rows > 0) {
+				$message = "Username is already taken. Please choose another username.";
+			} elseif ($resultEmail->num_rows > 0) {
+				$message = "Email is already taken. Please choose another email address.";
+			} else {
+				// Insert data into the database
+				$sql = "INSERT INTO users (username, email, skey, password) VALUES ('$username', '$email', '$skey', '$password')";
+
+				if ($conn->query($sql) === TRUE) {
+					$message = "New user created successfully. You can now login.";
+				} else {
+					$message = "Error: " . $sql . "<br>" . $conn->error;
+				}
+			}
+		}
+
+		// Close connection
+		$conn->close();
+	}
+	?>
+
   
-  <div class="message">
-    <?php
-    // Display the message
-    echo $message;
-    ?>
-  </div>
+	<div class="message">
+		<?php
+		// Display the message
+		echo $message;
+		?>
+	</div>
 
-  <form action="Signup.php" method="post">
-    <img src="Logo.png" alt="Your Image" style="width: 75%;">
-    <h2>Signup</h2>
-    <div class="container">
-      <label for="username"><b>Username</b></label>
-      <input type="text" placeholder="Enter Username" name="username" required />
+	<form action="Signup.php" method="post">
+		<img src="Logo.png" alt="Your Image" style="width: 75%;">
+		<h2>Signup</h2>
+		<div class="container">
+		  <label for="username"><b>Username</b></label>
+		  <input type="text" placeholder="Enter Username" name="username" required />
 
-      <label for="email"><b>Email</b></label>
-      <input type="text" placeholder="Enter Email" name="email" required />
+		  <label for="email"><b>Email</b></label>
+		  <input type="text" placeholder="Enter Email" name="email" required />
+		  
+		  <label for="skey"><b>Security Key</b></label>
+		  <input type="text" placeholder="Enter A 12-Digit Security Key" name="skey" required />
 
-      <label for="psw"><b>Password</b></label>
-      <input type="password" placeholder="Enter Password" name="psw" required />
+		  <label for="psw"><b>Password</b></label>
+		  <input type="password" placeholder="Enter Password" name="psw" required />
 
-      <label for="psw-repeat"><b>Repeat Password</b></label>
-      <input type="password" placeholder="Repeat Password" name="psw-repeat" required />
+		  <label for="psw-repeat"><b>Repeat Password</b></label>
+		  <input type="password" placeholder="Enter Password Again" name="psw-repeat" required />
 
-      <button type="submit" class="signupbtn">Sign Up</button>
-    </div>
-    <p>Already have an account? <a href="Login.php">Login here</a>.</p>
-  </form>
+		  <button type="submit" class="signupbtn">Sign Up</button>
+		</div>
+		<p>Already have an account? <a href="Login.php">Login here</a>.</p>
+	</form>
 </body>
 </html>
