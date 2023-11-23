@@ -24,3 +24,4 @@ Welcome to the GitHub repository for a simple tech E-Commerce website done by Vi
 6. Brute Force Protection and Lockdown Duration.
 7. Disable Right-Click.
 8. Disable Text Selection.
+9. Input Sanitization.
