@@ -16,4 +16,4 @@ Welcome to the GitHub repository for a simple tech E-Commerce website done by Vi
 4. To view the codes, just right-click the desired PHP file, click on "Open with..." and select "Notepad++". If do not have Notepad++, can open with any other application that supports HTML, or PHP files such as Visual Studio or NetBeans.
 
 # Security
-Provide information on security methods, functions, and techniques implemented in the project.
+1. Hashed Password and Security Key.
