@@ -31,21 +31,21 @@ Code Inspection:
     - Select "Open with..." and choose an application like Notepad++, Visual Studio, or NetBeans that supports HTML or PHP files.
 
 # Security Features
-1. Hashed Password and Hashed Security Key
+1. Hashed Password and Hashed Security Key:
     - User passwords and security keys are stored in a hashed format to enhance security.
-2. Validation of Security Key
+2. Validation of Security Key:
     - Implemented validation checks for security keys to ensure they meet specified criteria.
-3. Preventing Duplicate Usernames and Emails
+3. Preventing Duplicate Usernames and Emails:
     - The system prevents the creation of user accounts with duplicate usernames and emails.
-4. Protection Against SQL Injection
+4. Protection Against SQL Injection:
     - Robust measures are in place to protect against SQL injection attacks.
-5. Brute Force Protection and Lockdown Duration
+5. Brute Force Protection and Lockdown Duration:
     - Brute force protection mechanisms are implemented, and user accounts may be temporarily locked after multiple failed login attempts.
-6. Disable Right-Click
+6. Disable Right-Click:
     - Right-click functionality is disabled to prevent unauthorized copying of content.
-7. Disable Text Selection
+7. Disable Text Selection:
     - Text selection is disabled to enhance content protection.
-8. Input Sanitization
+8. Input Sanitization:
     - Input data is sanitized to prevent malicious input and potential security vulnerabilities.
 
 # Additional Notes
