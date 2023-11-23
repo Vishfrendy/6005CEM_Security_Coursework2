@@ -82,6 +82,12 @@
 	// Initialize an empty message variable
 	$message = "";
 
+	// Maximum number of allowed login attempts
+	$maxAttempts = 3;
+
+	// Lockout 5 seconds duration in seconds 
+	$lockoutDuration = 60;
+
 	// Check if the form is submitted
 	if ($_SERVER["REQUEST_METHOD"] == "POST") {
 		// Get form data
@@ -108,20 +114,47 @@
 
 		if ($result->num_rows > 0) {
 			$row = $result->fetch_assoc();
+
+			// Check if the account is locked
+			$lockoutQuery = "SELECT timestamp FROM login_attempts WHERE username = '$username' ORDER BY timestamp DESC LIMIT 1";
+			$lockoutResult = $conn->query($lockoutQuery);
+
+			if ($lockoutResult->num_rows > 0) {
+				$lastAttemptTime = strtotime($lockoutResult->fetch_assoc()["timestamp"]);
+				$elapsedTime = time() - $lastAttemptTime;
+
+				if ($elapsedTime < $lockoutDuration) {
+					$message = "Account is temporarily locked due to too many failed login attempts. Please try again later.";
+					// You may also want to log this attempt for security monitoring purposes
+				} else {
+					// If the lockout duration has passed, reset the login attempts
+					$resetAttemptsQuery = "DELETE FROM login_attempts WHERE username = '$username'";
+					$conn->query($resetAttemptsQuery);
+				}
+			}
+
 			// Verify the entered password against the stored hash
 			if (password_verify($password, $row["password"])) {
+				// Reset login attempts upon successful login
+				$resetAttemptsQuery = "DELETE FROM login_attempts WHERE username = '$username'";
+				$conn->query($resetAttemptsQuery);
+
 				$message = "Login successful. Welcome, $username!";
 				// Redirect to index.php
 				header("Location: index.php");
 				exit();
 			} else {
 				$message = "Invalid password. Please try again.";
+
+				// Log failed login attempts
+				$logAttemptQuery = "INSERT INTO login_attempts (username, timestamp) VALUES ('$username', NOW())";
+				$conn->query($logAttemptQuery);
 			}
 		} else {
 			$message = "User not found. Please check your username.";
 		}
 
-		// Close connection
+		// Close connection after login attempt
 		$conn->close();
 	}
 	?>
@@ -137,13 +170,13 @@
 		<img src="Logo.png" alt="Your Image" style="width: 75%;">
 		<h2>Login</h2>
 		<div class="container">
-		  <label for="username"><b>Username</b></label>
-		  <input type="text" placeholder="Enter Username" name="username" required />
+			<label for="username"><b>Username</b></label>
+			<input type="text" placeholder="Enter Username" name="username" required />
 
-		  <label for="psw"><b>Password</b></label>
-		  <input type="password" placeholder="Enter Password" name="psw" required />
+			<label for="psw"><b>Password</b></label>
+			<input type="password" placeholder="Enter Password" name="psw" required />
 
-		  <button type="submit" class="loginbtn">Login</button>
+			<button type="submit" class="loginbtn">Login</button>
 		</div>
 		<p>Don't have an account? <a href="Signup.php">Sign up here</a>.</p>
 	</form>
