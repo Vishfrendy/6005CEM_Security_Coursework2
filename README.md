@@ -20,3 +20,5 @@ Welcome to the GitHub repository for a simple tech E-Commerce website done by Vi
 2. Validation of Security Key.
 3. Preventing Duplicate Usernames and Emails.
 4. Protection Against SQL Injection.
+5. SQL Injection Prevention.
+6. Brute Force Protection and Lockdown Duration.
