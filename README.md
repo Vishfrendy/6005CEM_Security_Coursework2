@@ -7,3 +7,6 @@ Explain how to install and set up the project.
 
 # Usage
 Provide examples and instructions on how to use the project. Include code snippets if necessary.
+
+# Security
+Provide information on security methods, functions, and techniques implemented in the project.
