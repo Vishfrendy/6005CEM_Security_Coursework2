@@ -11,6 +11,10 @@
             margin: 20px;
 			background-color: #F2F3F4;
 			overflow-x: hidden;
+			user-select: none;
+			-moz-user-select: none;
+			-webkit-user-select: none;
+			-ms-user-select: none;
         }
 		
 		h2 {
@@ -102,6 +106,12 @@
 			font-size: 16px;
 		}
     </style>
+	
+	<script>
+		document.addEventListener('contextmenu', function (e) {
+			e.preventDefault();
+		});
+	</script>
 </head>
 <body>
 	<header>
@@ -118,6 +128,11 @@
     <h2>The Latest Smartphones In The Market!</h2>
 
     <?php
+		if ($_SERVER['HTTPS'] != 'on') {
+			header('Location: https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
+			exit;
+		}
+		
 		// Sample product data
 		$products = [
 			['id' => 1, 'name' => 'iPhone 13 Pro', 'brand' => 'Apple', 'price' => 2999.00, 'image' => 'https://doc.iwant.cz/pic/E0UY000501-600-600.jpg'],

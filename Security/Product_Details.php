@@ -11,6 +11,10 @@
             font-family: 'Arial', sans-serif;
             background-color: #f4f4f4;
 			text-align: center;
+			user-select: none;
+			-moz-user-select: none;
+			-webkit-user-select: none;
+			-ms-user-select: none;
         }
 
         h1 {
@@ -69,6 +73,12 @@
             margin-top: 15px;
         }
     </style>
+	
+	<script>
+		document.addEventListener('contextmenu', function (e) {
+			e.preventDefault();
+		});
+	</script>
 </head>
 <body>
 

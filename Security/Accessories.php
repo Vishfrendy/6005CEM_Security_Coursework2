@@ -11,6 +11,10 @@
             margin: 20px;
 			background-color: #F2F3F4;
 			overflow-x: hidden;
+			user-select: none;
+			-moz-user-select: none;
+			-webkit-user-select: none;
+			-ms-user-select: none;
         }
 		
 		h2 {
@@ -102,6 +106,12 @@
 			font-size: 16px;
 		}
     </style>
+	
+	<script>
+		document.addEventListener('contextmenu', function (e) {
+			e.preventDefault();
+		});
+	</script>
 </head>
 <body>
 	<header>

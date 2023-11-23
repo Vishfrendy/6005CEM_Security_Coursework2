@@ -11,6 +11,10 @@
       justify-content: center;
       align-items: center;
       height: 100vh;
+	  user-select: none;
+	  -moz-user-select: none;
+	  -webkit-user-select: none;
+	  -ms-user-select: none;
     }
     form {
       background-color: #fff;
@@ -75,6 +79,13 @@
       margin-bottom: 10px;
     }
   </style>
+  
+  <script>
+    document.addEventListener('contextmenu', function (e) {
+        e.preventDefault();
+    });
+  </script>
+
 </head>
 
 <body>

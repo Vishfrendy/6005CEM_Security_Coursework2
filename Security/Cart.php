@@ -60,6 +60,10 @@ $products = [
             font-family: Arial, sans-serif;
             margin-top: 20px;
 			background-color: #F2F3F4;
+			user-select: none;
+			-moz-user-select: none;
+			-webkit-user-select: none;
+			-ms-user-select: none;
         }
 		
 		h2 {
@@ -177,6 +181,12 @@ $products = [
 			font-size: 16px;
 		}
     </style>
+	
+	<script>
+		document.addEventListener('contextmenu', function (e) {
+			e.preventDefault();
+		});
+	</script>
 </head>
 <body>
 	<header>
