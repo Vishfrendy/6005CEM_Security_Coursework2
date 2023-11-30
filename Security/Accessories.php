@@ -143,9 +143,11 @@
 			die("Connection failed: " . $conn->connect_error);
 		}
 
-		// Query to retrieve data from the database (rows 11 to 20)
+		// Query to retrieve data from the database using prepared statements (rows 11 to 20)
 		$sql = "SELECT id, name, brand, price, image FROM products LIMIT 10 OFFSET 10";
-		$result = $conn->query($sql);
+		$stmt = $conn->prepare($sql);
+		$stmt->execute();
+		$result = $stmt->get_result();
 
 
 		if ($result->num_rows > 0) {

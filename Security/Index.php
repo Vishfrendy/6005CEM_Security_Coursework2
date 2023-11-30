@@ -148,9 +148,12 @@
 			die("Connection failed: " . $conn->connect_error);
 		}
 
-		// Query to retrieve the first 10 rows from the database
+		// Query to retrieve the first 10 rows from the database using prepared statements
 		$sql = "SELECT id, name, brand, price, image FROM products LIMIT 10";
-		$result = $conn->query($sql);
+		$stmt = $conn->prepare($sql);
+		$stmt->execute();
+		$result = $stmt->get_result();
+
 
 		if ($result->num_rows > 0) {
 			// Output data from each row

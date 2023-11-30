@@ -104,8 +104,8 @@
 		// Check if the form is submitted
 		if ($_SERVER["REQUEST_METHOD"] == "POST") {
 			// Get form data
-			$username = $_POST["username"];
-			$email = $_POST["email"];
+			$username = htmlspecialchars($_POST["username"]);
+			$email = filter_var($_POST["email"], FILTER_VALIDATE_EMAIL);
 			$rawSkey = $_POST["skey"]; // Use the original input
 			$skey = password_hash($rawSkey, PASSWORD_BCRYPT); // Hash the security key
 			$password = password_hash($_POST["psw"], PASSWORD_BCRYPT);
@@ -125,30 +125,40 @@
 			}
 
 			// Check if the username already exists
-			$checkUsernameQuery = "SELECT username FROM users WHERE username = '$username'";
-			$resultUsername = $conn->query($checkUsernameQuery);
+			$checkUsernameQuery = $conn->prepare("SELECT username FROM users WHERE username = ?");
+			$checkUsernameQuery->bind_param("s", $username);
+			$checkUsernameQuery->execute();
+			$checkUsernameQuery->store_result();
 
 			// Check if the email already exists
-			$checkEmailQuery = "SELECT email FROM users WHERE email = '$email'";
-			$resultEmail = $conn->query($checkEmailQuery);
+			$checkEmailQuery = $conn->prepare("SELECT email FROM users WHERE email = ?");
+			$checkEmailQuery->bind_param("s", $email);
+			$checkEmailQuery->execute();
+			$checkEmailQuery->store_result();
 
 			// Validate the security key
 			if (!password_verify($rawSkey, $skey)) {
 				$message = "Invalid security key format.";
 			} else {
 				// Continue with the rest of your logic
-				if ($resultUsername->num_rows > 0) {
+				// Replace $resultUsername and $resultEmail with $checkUsernameQuery and $checkEmailQuery
+				if ($checkUsernameQuery->num_rows > 0) {
 					$message = "Username is already taken. Please choose another username.";
-				} elseif ($resultEmail->num_rows > 0) {
+				} elseif ($checkEmailQuery->num_rows > 0) {
 					$message = "Email is already taken. Please choose another email address.";
 				} else {
-					// Insert data into the database
-					$sql = "INSERT INTO users (username, email, skey, password) VALUES ('$username', '$email', '$skey', '$password')";
-					if ($conn->query($sql) === TRUE) {
+					// Insert data into the database using prepared statement
+					$insertQuery = $conn->prepare("INSERT INTO users (username, email, skey, password) VALUES (?, ?, ?, ?)");
+					$insertQuery->bind_param("ssss", $username, $email, $skey, $password);
+
+					if ($insertQuery->execute()) {
 						$message = "New user created successfully. You can now login.";
 					} else {
-						$message = "Error: " . $sql . "<br>" . $conn->error;
+						$message = "Error: " . $insertQuery->error;
 					}
+
+					// Close the prepared statement
+					$insertQuery->close();
 				}
 			}
 
@@ -175,7 +185,7 @@
 				<input type="text" placeholder="Enter Email" name="email" required autocomplete="off" />
 			  
 				<label for="skey"><b>Security Key</b></label>
-				<input type="text" placeholder="Enter A 12-Digit Security Key" name="skey" required autocomplete="off" />
+				<input type="password" placeholder="Enter A 12-Digit Security Key" name="skey" required autocomplete="off" />
 
 				<label for="psw"><b>Password</b></label>
 				<input type="password" placeholder="Enter Password" name="psw" required autocomplete="off" />
