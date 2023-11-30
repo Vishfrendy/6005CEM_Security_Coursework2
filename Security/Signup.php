@@ -106,40 +106,39 @@
 			// Get form data
 			$username = htmlspecialchars($_POST["username"]);
 			$email = filter_var($_POST["email"], FILTER_VALIDATE_EMAIL);
-			$rawSkey = $_POST["skey"]; // Use the original input
-			$skey = password_hash($rawSkey, PASSWORD_BCRYPT); // Hash the security key
+			$skey = $_POST["skey"];
 			$password = password_hash($_POST["psw"], PASSWORD_BCRYPT);
 
-			// Database connection parameters
-			$servername = "localhost";
-			$db_username = "root";
-			$password_db = "";
-			$dbname = "security";
-
-			// Create connection
-			$conn = new mysqli($servername, $db_username, $password_db, $dbname);
-
-			// Check connection
-			if ($conn->connect_error) {
-				die("Connection failed: " . $conn->connect_error);
-			}
-
-			// Check if the username already exists
-			$checkUsernameQuery = $conn->prepare("SELECT username FROM users WHERE username = ?");
-			$checkUsernameQuery->bind_param("s", $username);
-			$checkUsernameQuery->execute();
-			$checkUsernameQuery->store_result();
-
-			// Check if the email already exists
-			$checkEmailQuery = $conn->prepare("SELECT email FROM users WHERE email = ?");
-			$checkEmailQuery->bind_param("s", $email);
-			$checkEmailQuery->execute();
-			$checkEmailQuery->store_result();
-
-			// Validate the security key
-			if (!password_verify($rawSkey, $skey)) {
-				$message = "Invalid security key format.";
+			// Validate the security key format
+			if (!preg_match('/^\d{12}$/', $skey)) {
+				$message = "Invalid security key format. Please enter a 12-digit number.";
 			} else {
+				// Database connection parameters
+				$servername = "localhost";
+				$db_username = "root";
+				$password_db = "";
+				$dbname = "security";
+
+				// Create connection
+				$conn = new mysqli($servername, $db_username, $password_db, $dbname);
+
+				// Check connection
+				if ($conn->connect_error) {
+					die("Connection failed: " . $conn->connect_error);
+				}
+
+				// Check if the username already exists
+				$checkUsernameQuery = $conn->prepare("SELECT username FROM users WHERE username = ?");
+				$checkUsernameQuery->bind_param("s", $username);
+				$checkUsernameQuery->execute();
+				$checkUsernameQuery->store_result();
+
+				// Check if the email already exists
+				$checkEmailQuery = $conn->prepare("SELECT email FROM users WHERE email = ?");
+				$checkEmailQuery->bind_param("s", $email);
+				$checkEmailQuery->execute();
+				$checkEmailQuery->store_result();
+
 				// Continue with the rest of your logic
 				// Replace $resultUsername and $resultEmail with $checkUsernameQuery and $checkEmailQuery
 				if ($checkUsernameQuery->num_rows > 0) {
@@ -160,10 +159,10 @@
 					// Close the prepared statement
 					$insertQuery->close();
 				}
-			}
 
-			// Close connection
-			$conn->close();
+				// Close connection
+				$conn->close();
+			}
 		}
 		?>
 

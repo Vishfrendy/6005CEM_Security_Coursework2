@@ -98,21 +98,16 @@
 	</head>
 
 	<body>
-		<?php
+	<?php
 		// Initialize an empty message variable
 		$message = "";
-
-		// Maximum number of allowed login attempts
-		$maxAttempts = 3;
-
-		// Lockout 5 seconds duration in seconds 
-		$lockoutDuration = 60;
 
 		// Check if the form is submitted
 		if ($_SERVER["REQUEST_METHOD"] == "POST") {
 			// Get form data
 			$username = $_POST["username"];
 			$password = $_POST["psw"];
+			$skey = $_POST["skey"]; // Retrieve the security key
 
 			// Database connection parameters
 			$servername = "localhost";
@@ -154,7 +149,8 @@
 				}
 
 				// Verify the entered password against the stored hash
-				if (password_verify($password, $row["password"])) {
+				// Also, check if the entered skey matches the stored skey
+				if (password_verify($password, $row["password"]) && $skey == $row["skey"]) {
 					// Reset login attempts upon successful login
 					$resetAttemptsQuery = "DELETE FROM login_attempts WHERE username = '$username'";
 					$conn->query($resetAttemptsQuery);
@@ -164,7 +160,7 @@
 					header("Location: index.php");
 					exit();
 				} else {
-					$message = "Invalid password. Please try again.";
+					$message = "Invalid credentials. Please try again.";
 
 					// Log failed login attempts
 					$logAttemptQuery = "INSERT INTO login_attempts (username, timestamp) VALUES ('$username', NOW())";
@@ -179,6 +175,7 @@
 		}
 		?>
 
+
 		<div class="message">
 			<?php
 			// Display the message
@@ -192,6 +189,9 @@
 			<div class="container">
 				<label for="username"><b>Username</b></label>
 				<input type="text" placeholder="Enter Username" name="username" required  autocomplete="off" />
+				
+				<label for="skey"><b>Security Key</b></label>
+				<input type="password" placeholder="Enter Security key" name="skey" required  autocomplete="off" />
 
 				<label for="psw"><b>Password</b></label>
 				<input type="password" placeholder="Enter Password" name="psw" required  autocomplete="off" />
